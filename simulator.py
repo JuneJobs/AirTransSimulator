@@ -1,16 +1,17 @@
-import threading, random, time, http.client
+import threading, random, time, http.client, json
 # discription Simualtor
 # author      Junhee Park (j.jobs1028@gmail.com)
 # since       2018. 10. 26.
-# last update 2018. 10. 26.
+# last update 2018. 10. 27.
 
 class Simulator:
     def __init__(self):
-        self.id = 0
-        self.transferInterval = 30  #sec
+        self.msgType = 7
+        self.cid = 3
+        self.transferInterval = 10  #sec
         self.measureInterval = 1    #sec
         self.measuredDataSet = []
-        self.transferringDataSet = {}
+        self.transferringDataSet = []
         self.response = {}
     
     def storeMeasuredData(self, timestamp, data):
@@ -52,29 +53,32 @@ class Simulator:
         strSquare += ' '+ str(int(cnt/self.transferInterval*100)) + '%'
         return strSquare
 
-    def connection(self, message):
-        conn = http.client.HTTPConnection("localhost:8080/serverapi")
-        body = message
+    def connection(self, body):
+        conn = http.client.HTTPConnection("localhost", 8080, timeout = 10)
         headers = {
             'Content-Type': "application/json",
             'Cache-Control': "no-cache"
         }
-        conn.request("POST", "serverapi", body, headers)
+        conn.request("POST", "/serverdatatran", body, headers)
         res = conn.getresponse()
         data = res.read()
-        print(data.decode("utf-8"))
+        print('Response >>\n' + data.decode("utf-8"))
 
     def msgPacking(self):
-        return {
+        return json.dumps({
             "header": {
-                "msgType": 4,
+                "msgType": self.msgType,
                 "msgLen": self.transferInterval,
-                "endpointId": 1
+                "endpointId": self.cid
             },
             "payload": {
-                self.measuredDataSet
+                'airQualityDataListEncodings': {
+                    'dataTupleLen': len(self.transferringDataSet),
+                    'airQualityDataTuples': self.transferringDataSet
+                }
+                
             }
-        }
+        })
 
     def measureData(self):
         print('Measuring ' + self.animator(len(self.measuredDataSet)))
@@ -97,15 +101,15 @@ class Simulator:
         self.encodeData(measuredData, self.getAqiData())   # PM2.5 AQI
         self.encodeData(measuredData, self.getAqiData())   # PM10 AQI
         self.storeMeasuredData(timestamp, measuredData)
-        print('Response >>\n' + str(self.response))
         threading.Timer(self.measureInterval, self.measureData).start()
 
 
     def transferData(self):
         measuredDataSet = self.getMeasuredDataSet()
         if len(measuredDataSet) > 1:
-            self.clearMeasuredDataSet()
             self.setTransferringDataSet(measuredDataSet)
+            self.clearMeasuredDataSet()
+            self.connection(self.msgPacking())
             print('Transfer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n', self.msgPacking())
         threading.Timer(self.transferInterval, self.transferData).start()
 
