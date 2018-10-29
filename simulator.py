@@ -87,19 +87,23 @@ class Simulator:
         self.encodeData(measuredData, timestamp)
         self.encodeData(measuredData, self.getTempData())
         self.encodeData(measuredData, timestamp)  # Timestamp
-        self.encodeData(measuredData, self.getTempData())  # Temperature
-        self.encodeData(measuredData, self.getRawData())   # CO
-        self.encodeData(measuredData, self.getRawData())   # O3
-        self.encodeData(measuredData, self.getRawData())   # NO2
-        self.encodeData(measuredData, self.getRawData())   # SO2
-        self.encodeData(measuredData, self.getRawData())   # PM2.5
-        self.encodeData(measuredData, self.getRawData())   # PM10
-        self.encodeData(measuredData, self.getAqiData())   # CO AQI
-        self.encodeData(measuredData, self.getAqiData())   # O3 AQI
-        self.encodeData(measuredData, self.getAqiData())   # NO2 AQI
-        self.encodeData(measuredData, self.getAqiData())   # SO2 AQI
-        self.encodeData(measuredData, self.getAqiData())   # PM2.5 AQI
-        self.encodeData(measuredData, self.getAqiData())   # PM10 AQI
+        self.encodeData(measuredData, '32.882425,-117.234667')  # lat,lng
+        self.encodeData(measuredData, 'Q30Q')                   # Nation
+        self.encodeData(measuredData, 'Q99')                    # State
+        self.encodeData(measuredData, 'Q16552')                 # City
+        self.encodeData(measuredData, self.getTempData())       # Temperature
+        self.encodeData(measuredData, self.getRawData())        # CO
+        self.encodeData(measuredData, self.getRawData())        # O3
+        self.encodeData(measuredData, self.getRawData())        # NO2
+        self.encodeData(measuredData, self.getRawData())        # SO2
+        self.encodeData(measuredData, self.getRawData())        # PM2.5
+        self.encodeData(measuredData, self.getRawData())        # PM10
+        self.encodeData(measuredData, self.getAqiData())        # CO AQI
+        self.encodeData(measuredData, self.getAqiData())        # O3 AQI
+        self.encodeData(measuredData, self.getAqiData())        # NO2 AQI
+        self.encodeData(measuredData, self.getAqiData())        # SO2 AQI
+        self.encodeData(measuredData, self.getAqiData())        # PM2.5 AQI
+        self.encodeData(measuredData, self.getAqiData())        # PM10 AQI
         self.storeMeasuredData(timestamp, measuredData)
         threading.Timer(self.measureInterval, self.measureData).start()
 
