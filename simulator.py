@@ -7,7 +7,7 @@ import threading, random, time, http.client, json
 class Simulator:
     def __init__(self):
         self.msgType = 7
-        self.cid = 3
+        self.cid = 8
         self.transferInterval = 10  #sec
         self.measureInterval = 1    #sec
         self.measuredDataSet = []
@@ -84,11 +84,9 @@ class Simulator:
         print('Measuring ' + self.animator(len(self.measuredDataSet)))
         timestamp = self.getTimeStamp()
         measuredData = []
-        self.encodeData(measuredData, timestamp)
-        self.encodeData(measuredData, self.getTempData())
         self.encodeData(measuredData, timestamp)  # Timestamp
         self.encodeData(measuredData, '32.882425,-117.234667')  # lat,lng
-        self.encodeData(measuredData, 'Q30Q')                   # Nation
+        self.encodeData(measuredData, 'Q30')                   # Nation
         self.encodeData(measuredData, 'Q99')                    # State
         self.encodeData(measuredData, 'Q16552')                 # City
         self.encodeData(measuredData, self.getTempData())       # Temperature
