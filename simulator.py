@@ -2,12 +2,12 @@ import threading, random, time, http.client, json
 # discription Simualtor
 # author      Junhee Park (j.jobs1028@gmail.com)
 # since       2018. 10. 26.
-# last update 2018. 10. 27.
+# last update 2018. 10. 29.
 
 class Simulator:
     def __init__(self):
         self.msgType = 7
-        self.cid = 8
+        self.cid = 9
         self.transferInterval = 10  #sec
         self.measureInterval = 1    #sec
         self.measuredDataSet = []
