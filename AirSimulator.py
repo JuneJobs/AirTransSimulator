@@ -65,7 +65,7 @@ class Simulator:
         return strSquare
 
     def connection(self, body):
-        conn = http.client.HTTPConnection("localhost", 8080, timeout = 10)
+        conn = http.client.HTTPConnection("dev.qualcomminst.com", 8080, timeout = 10)
         headers = {
             'Content-Type': "application/json",
             'Cache-Control': "no-cache"

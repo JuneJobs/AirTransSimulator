@@ -12,7 +12,7 @@ import json
 class Simulator:
     def __init__(self):
         self.msgType = 55
-        self.cid = 1
+        self.cid = 17
         self.transferInterval = 10  # sec
         self.measureInterval = 1  # sec
         self.measuredDataSet = []
