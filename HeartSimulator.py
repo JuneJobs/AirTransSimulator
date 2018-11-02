@@ -1,19 +1,24 @@
-import threading, random, time, http.client, json
-# discription Simualtor
+import threading
+import random
+import time
+import http.client
+import json
+# Description Simulator (HEART DATA)
 # author      Junhee Park (j.jobs1028@gmail.com)
-# since       2018. 10. 26.
-# last update 2018. 10. 29.
+# since       2018. 10. 31.
+# last update 2018. 10. 31.
+
 
 class Simulator:
     def __init__(self):
-        self.msgType = 7
-        self.cid = 9
-        self.transferInterval = 10  #sec
-        self.measureInterval = 1    #sec
+        self.msgType = 55
+        self.cid = 1
+        self.transferInterval = 10  # sec
+        self.measureInterval = 1  # sec
         self.measuredDataSet = []
         self.transferringDataSet = []
         self.response = {}
-    
+
     def storeMeasuredData(self, timestamp, data):
         self.measuredDataSet.append(data)
 
@@ -29,17 +34,11 @@ class Simulator:
     def getTimeStamp(self):
         return int(time.time())
 
-    def getTempData(self):
-        return random.randint(20, 30)
+    def getHeartData(self):
+        return random.randint(70, 100)
 
-    def getRawData(self):
-        return round(random.uniform(1, 99), 2)
-
-    def getAqiData(self):
-        return random.randint(1, 500)
-
-    def bulidCsv(self, target, string):
-        return target + ',' + str(string) if target != '' else str(string)
+    def getRrData(self):
+        return random.randint(120, 140)
 
     def encodeData(self, target, data):
         target.append(data)
@@ -50,11 +49,12 @@ class Simulator:
             strSquare += '■'
         for i in range(1, self.transferInterval - cnt):
             strSquare += '□'
-        strSquare += ' '+ str(int(cnt/self.transferInterval*100)) + '%'
+        strSquare += ' ' + str(int(cnt/self.transferInterval*100)) + '%'
         return strSquare
 
     def connection(self, body):
-        conn = http.client.HTTPConnection("localhost", 8080, timeout = 10)
+        conn = http.client.HTTPConnection(
+            "dev.qualcomminst.com", 8080, timeout=10)
         headers = {
             'Content-Type': "application/json",
             'Cache-Control': "no-cache"
@@ -72,11 +72,11 @@ class Simulator:
                 "endpointId": self.cid
             },
             "payload": {
-                'airQualityDataListEncodings': {
+                'heartRelatedDataListEncodings': {
                     'dataTupleLen': len(self.transferringDataSet),
-                    'airQualityDataTuples': self.transferringDataSet
+                    'heartRelatedDataTuples': self.transferringDataSet
                 }
-                
+
             }
         })
 
@@ -86,25 +86,13 @@ class Simulator:
         measuredData = []
         self.encodeData(measuredData, timestamp)  # Timestamp
         self.encodeData(measuredData, '32.882425,-117.234667')  # lat,lng
-        self.encodeData(measuredData, 'Q30')                   # Nation
+        self.encodeData(measuredData, 'Q30')                    # Nation
         self.encodeData(measuredData, 'Q99')                    # State
         self.encodeData(measuredData, 'Q16552')                 # City
-        self.encodeData(measuredData, self.getTempData())       # Temperature
-        self.encodeData(measuredData, self.getRawData())        # CO
-        self.encodeData(measuredData, self.getRawData())        # O3
-        self.encodeData(measuredData, self.getRawData())        # NO2
-        self.encodeData(measuredData, self.getRawData())        # SO2
-        self.encodeData(measuredData, self.getRawData())        # PM2.5
-        self.encodeData(measuredData, self.getRawData())        # PM10
-        self.encodeData(measuredData, self.getAqiData())        # CO AQI
-        self.encodeData(measuredData, self.getAqiData())        # O3 AQI
-        self.encodeData(measuredData, self.getAqiData())        # NO2 AQI
-        self.encodeData(measuredData, self.getAqiData())        # SO2 AQI
-        self.encodeData(measuredData, self.getAqiData())        # PM2.5 AQI
-        self.encodeData(measuredData, self.getAqiData())        # PM10 AQI
+        self.encodeData(measuredData, self.getHeartData())      # Heart-rate
+        self.encodeData(measuredData, self.getRrData())         # RR interval
         self.storeMeasuredData(timestamp, measuredData)
         threading.Timer(self.measureInterval, self.measureData).start()
-
 
     def transferData(self):
         measuredDataSet = self.getMeasuredDataSet()
@@ -120,12 +108,10 @@ class Simulator:
         self.transferData()
 
 
-
-
-
 def main():
     app = Simulator()
     app.run()
+
 
 if __name__ == '__main__':
     main()
